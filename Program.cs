@@ -235,7 +235,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Add handlers below
-app.MapGet("/governors", () =>
+app.MapGet("/api/governors", () =>
 {
     return governors.Select(g => new GovernorDTO
     {
@@ -326,5 +326,26 @@ app.MapPost("/api/colonyMinerals", (ColonyMineral colonyMineral) =>
         MineralQuantity = colonyMineral.MineralQuantity
     });
 });  
+
+app.MapPut("/api/colonyMinerals/{id}", (int id, ColonyMineral updateColonyMineral) =>
+{
+    ColonyMineral colonyMineral = colonyMinerals.FirstOrDefault(cm => cm.Id == id);
+
+      if (colonyMineral == null)
+    {
+        return Results.NotFound();
+    }
+
+    colonyMineral.ColonyId = updateColonyMineral.ColonyId;
+    colonyMineral.MineralId = updateColonyMineral.MineralId;
+    colonyMineral.MineralQuantity = updateColonyMineral.MineralQuantity;
+      return Results.Ok(new ColonyMineralDTO
+    {
+        Id = colonyMineral.Id,
+        ColonyId = colonyMineral.ColonyId,
+        MineralId = colonyMineral.MineralId,
+        MineralQuantity = colonyMineral.MineralQuantity
+    });
+});
 
 app.Run();
