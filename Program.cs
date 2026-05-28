@@ -235,5 +235,45 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Add handlers below
+app.MapGet("/governors", () =>
+{
+    return governors.Select(g => new GovernorDTO
+    {
+        Id = g.Id,
+        Name = g.Name,
+        ColonyId = g.ColonyId,
+        IsActive = g.IsActive
+    });
+});
+
+app.MapGet("/api/facilities", () =>
+{
+    return facilities.Select(f =>
+    {
+        return new FacilityDTO
+        {
+            Id = f.Id,
+            Name = f.Name,
+            IsActive = f.IsActive
+        };
+    });
+});
+
+app.MapGet("/api/facilities/{id}", (int id) =>
+{
+    Facility facility = facilities.FirstOrDefault(f => f.Id == id);
+
+    if (facility == null)
+    {
+        return Results.NotFound();
+    }
+
+    return Results.Ok(new FacilityDTO
+    {
+        Id = facility.Id,
+        Name = facility.Name,
+        IsActive = facility.IsActive
+    });
+});
 
 app.Run();
