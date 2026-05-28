@@ -7,5 +7,5 @@ public class ColonyMineralDTO
     public int MineralId { get; set; }
     public int MineralQuantity { get; set; }
 
-    public List<MineralDTO> Mineral { get; set; }
+    public MineralDTO Mineral { get; set; }
 }
