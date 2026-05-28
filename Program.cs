@@ -229,7 +229,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+  app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
@@ -237,43 +237,79 @@ app.UseHttpsRedirection();
 // Add handlers below
 app.MapGet("/api/governors", () =>
 {
-    return governors.Select(g => new GovernorDTO
+  return governors.Select(g =>
+  {
+    Colony colony = colonies.FirstOrDefault(c => c.Id == g.ColonyId);
+
+    return new GovernorDTO
     {
-        Id = g.Id,
-        Name = g.Name,
-        ColonyId = g.ColonyId,
-        IsActive = g.IsActive
-    });
+      Id = g.Id,
+      Name = g.Name,
+      ColonyId = g.ColonyId,
+      IsActive = g.IsActive,
+      Colony = colony == null ? null : new ColonyDTO
+      {
+        Id = colony.Id,
+        Name = colony.Name,
+        Population = colony.Population
+      }
+    };
+  });
+});
+
+app.MapGet("/api/governors/{id}", (int id) =>
+{
+  Governor governor = governors.FirstOrDefault(g => g.Id == id);
+  if (governor == null)
+  {
+    return Results.NotFound();
+  }
+
+  Colony colony = colonies.FirstOrDefault(c => c.Id == governor.ColonyId);
+
+  return Results.Ok(new GovernorDTO
+  {
+    Id = governor.Id,
+    Name = governor.Name,
+    ColonyId = governor.ColonyId,
+    IsActive = governor.IsActive,
+    Colony = colony == null ? null : new ColonyDTO
+    {
+      Id = colony.Id,
+      Name = colony.Name,
+      Population = colony.Population
+    }
+  });
 });
 
 app.MapGet("/api/facilities", () =>
 {
-    return facilities.Select(f =>
+  return facilities.Select(f =>
+  {
+    return new FacilityDTO
     {
-        return new FacilityDTO
-        {
-            Id = f.Id,
-            Name = f.Name,
-            IsActive = f.IsActive
-        };
-    });
+      Id = f.Id,
+      Name = f.Name,
+      IsActive = f.IsActive
+    };
+  });
 });
 
 app.MapGet("/api/facilities/{id}", (int id) =>
 {
-    Facility facility = facilities.FirstOrDefault(f => f.Id == id);
+  Facility facility = facilities.FirstOrDefault(f => f.Id == id);
 
-    if (facility == null)
-    {
-        return Results.NotFound();
-    }
+  if (facility == null)
+  {
+    return Results.NotFound();
+  }
 
-    return Results.Ok(new FacilityDTO
-    {
-        Id = facility.Id,
-        Name = facility.Name,
-        IsActive = facility.IsActive
-    });
+  return Results.Ok(new FacilityDTO
+  {
+    Id = facility.Id,
+    Name = facility.Name,
+    IsActive = facility.IsActive
+  });
 });
 
 app.MapGet("/api/colonyMinerals", (int? colonyId, int? mineralId) =>
