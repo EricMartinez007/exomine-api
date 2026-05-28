@@ -276,4 +276,41 @@ app.MapGet("/api/facilities/{id}", (int id) =>
     });
 });
 
+app.MapGet("/api/colonyMinerals", (int? colonyId, int? mineralId) =>
+{
+    List<ColonyMineral> result = colonyMinerals.ToList();
+
+    if (colonyId != null)
+    {
+    result = result.Where(colonyMineral => colonyMineral.ColonyId == colonyId).ToList();
+    }
+
+    if (mineralId != null)
+    {
+    result = result.Where(colonyMineral => colonyMineral.MineralId == mineralId).ToList();
+    }
+
+    return result.Select(colonyMineral =>
+    {
+        return new ColonyMineralDTO
+        {
+            Id = colonyMineral.Id,
+            ColonyId = colonyMineral.ColonyId,
+            MineralId = colonyMineral.MineralId,
+            MineralQuantity = colonyMineral.MineralQuantity,
+            Mineral = new MineralDTO
+            {
+                Id = minerals.First(m => m.Id == colonyMineral.MineralId).Id,
+                Name = minerals.First(m => m.Id == colonyMineral.MineralId).Name
+            },
+            Colony = new ColonyDTO
+            {
+                Id = colonies.First(c => c.Id == colonyMineral.ColonyId).Id,
+                Name = colonies.First(c => c.Id == colonyMineral.ColonyId).Name,
+                Population = colonies.First(c => c.Id == colonyMineral.ColonyId).Population
+            }
+        };
+    });
+}); 
+
 app.Run();
