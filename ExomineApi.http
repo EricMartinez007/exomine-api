@@ -1,0 +1,6 @@
+@ExomineApi_HostAddress = http://localhost:5091
+
+GET {{ExomineApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
