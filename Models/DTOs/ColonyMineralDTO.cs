@@ -8,4 +8,5 @@ public class ColonyMineralDTO
     public int MineralQuantity { get; set; }
 
     public MineralDTO Mineral { get; set; }
+    public ColonyDTO Colony { get; set; }
 }
