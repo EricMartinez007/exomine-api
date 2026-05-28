@@ -313,4 +313,18 @@ app.MapGet("/api/colonyMinerals", (int? colonyId, int? mineralId) =>
     });
 }); 
 
+app.MapPost("/api/colonyMinerals", (ColonyMineral colonyMineral) =>
+{
+    colonyMineral.Id = colonyMinerals.Any() ? colonyMinerals.Max(cm => cm.Id) + 1 : 1;
+    colonyMinerals.Add(colonyMineral);
+
+    return Results.Created($"/api/colonyMinerals/{colonyMineral.Id}", new ColonyMineralDTO
+    {
+        Id = colonyMineral.Id,
+        ColonyId = colonyMineral.ColonyId,
+        MineralId = colonyMineral.MineralId,
+        MineralQuantity = colonyMineral.MineralQuantity
+    });
+});  
+
 app.Run();
