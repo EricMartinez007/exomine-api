@@ -233,6 +233,16 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Add handlers below
+app.MapGet("/governors", () =>
+{
+    return governors.Select(g => new GovernorDTO
+    {
+        Id = g.Id,
+        Name = g.Name,
+        ColonyId = g.ColonyId,
+        IsActive = g.IsActive
+    });
+});
 
 app.MapGet("/api/facilities", () =>
 {
