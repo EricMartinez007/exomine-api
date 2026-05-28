@@ -234,4 +234,34 @@ app.UseHttpsRedirection();
 
 // Add handlers below
 
+app.MapGet("/api/facilities", () =>
+{
+    return facilities.Select(f =>
+    {
+        return new FacilityDTO
+        {
+            Id = f.Id,
+            Name = f.Name,
+            IsActive = f.IsActive
+        };
+    });
+});
+
+app.MapGet("/api/facilities/{id}", (int id) =>
+{
+    Facility facility = facilities.FirstOrDefault(f => f.Id == id);
+
+    if (facility == null)
+    {
+        return Results.NotFound();
+    }
+
+    return Results.Ok(new FacilityDTO
+    {
+        Id = facility.Id,
+        Name = facility.Name,
+        IsActive = facility.IsActive
+    });
+});
+
 app.Run();
