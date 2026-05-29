@@ -384,7 +384,7 @@ app.MapPut("/api/colonyMinerals/{id}", (int id, ColonyMineral updateColonyMinera
     });
 });
 
-app.MapGet("/facilityMinerals", (int? facilityId, int? mineralId) =>
+app.MapGet("/api/facilityMinerals", (int? facilityId, int? mineralId) =>
 {
     var query = facilityMinerals.Where(fm =>
         (!facilityId.HasValue || fm.FacilityId == facilityId) &&
@@ -406,7 +406,7 @@ app.MapGet("/facilityMinerals", (int? facilityId, int? mineralId) =>
     });
 });
 
-app.MapPut("/facilityMinerals/{id}", (int id, FacilityMineral updatedFacilityMineral) =>
+app.MapPut("/api/facilityMinerals/{id}", (int id, FacilityMineral updatedFacilityMineral) =>
 {
     FacilityMineral facilityMineral = facilityMinerals.FirstOrDefault(fm => fm.Id == id);
     if (facilityMineral == null)
