@@ -384,4 +384,45 @@ app.MapPut("/api/colonyMinerals/{id}", (int id, ColonyMineral updateColonyMinera
     });
 });
 
+app.MapGet("/facilityMinerals", (int? facilityId, int? mineralId) =>
+{
+    var query = facilityMinerals.Where(fm =>
+        (!facilityId.HasValue || fm.FacilityId == facilityId) &&
+        (!mineralId.HasValue || fm.MineralId == mineralId));
+
+    return query.Select(fm =>
+    {
+        Mineral mineral = minerals.FirstOrDefault(m => m.Id == fm.MineralId);
+        Facility facility = facilities.FirstOrDefault(f => f.Id == fm.FacilityId);
+        return new FacilityMineralDTO
+        {
+            Id = fm.Id,
+            FacilityId = fm.FacilityId,
+            MineralId = fm.MineralId,
+            MineralQuantity = fm.MineralQuantity,
+            Mineral = mineral == null ? null : new MineralDTO { Id = mineral.Id, Name = mineral.Name },
+            Facility = facility == null ? null : new FacilityDTO { Id = facility.Id, Name = facility.Name, IsActive = facility.IsActive }
+        };
+    });
+});
+
+app.MapPut("/facilityMinerals/{id}", (int id, FacilityMineral updatedFacilityMineral) =>
+{
+    FacilityMineral facilityMineral = facilityMinerals.FirstOrDefault(fm => fm.Id == id);
+    if (facilityMineral == null)
+    {
+        return Results.NotFound();
+    }
+    facilityMineral.FacilityId = updatedFacilityMineral.FacilityId;
+    facilityMineral.MineralId = updatedFacilityMineral.MineralId;
+    facilityMineral.MineralQuantity = updatedFacilityMineral.MineralQuantity;
+    return Results.Ok(new FacilityMineralDTO
+    {
+        Id = facilityMineral.Id,
+        FacilityId = facilityMineral.FacilityId,
+        MineralId = facilityMineral.MineralId,
+        MineralQuantity = facilityMineral.MineralQuantity
+    });
+});
+
 app.Run();
